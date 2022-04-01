@@ -1,4 +1,5 @@
 const UserModel = require('../models/user-model');
+const AuthModel = require('../models/auth-model');
 const ApiError = require('../exeptions/api-error');
 const UserDto = require('../dtos/user-dto');
 const bcrypt = require('bcrypt');
@@ -14,15 +15,16 @@ class UserController{
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
             const {email, password, userName, userLastName, userPhoto, userSetting} = req.body;
-            const candidate = await UserModel.findOne({email});
+            const candidate = await AuthModel.findOne({email});
             if(candidate){
                 throw ApiError.BadRequest("Пользователь с таким мэйлом существует");
             }
 
             const hashPassword = await bcrypt.hash(password, 3);
-            const user = await UserModel.create({email, password: hashPassword, userName, userLastName, userPhoto, userSetting});
-            const userDto = new UserDto(user);
-            return res.json(userDto);
+            const user = await UserModel.create({userName, userLastName, userPhoto, userSetting});
+            const auth = await AuthModel.create({email, password: hashPassword, userId: user.id});
+            const userData = {user, auth};
+            return res.json(userData);
         }catch (e){
             next(e);
         }
@@ -36,7 +38,9 @@ class UserController{
             }
             const {userID} = req.query;
             const user = await UserModel.findById(userID);
-            return res.json(user);
+            const auth = await AuthModel.findOne({userId: userID});
+            const userData = {user, auth};
+            return res.json(userData);
         }catch (e){
             next(e);
         }
@@ -50,6 +54,7 @@ class UserController{
             }
             const {userID} = req.query;
             await UserModel.findByIdAndRemove(userID);
+            await AuthModel.findOneAndRemove({userId: userID});
             return res.json("User was removed");
         }catch (e){
             next(e);
