@@ -1,6 +1,8 @@
 const UserModel = require('../models/user-model');
 const ApiError = require('../exeptions/api-error');
 const UserDto = require('../dtos/user-dto');
+const bcrypt = require('bcrypt');
+const tokenService = require('../services/token-service');
 
 class UserController{
 
@@ -11,7 +13,9 @@ class UserController{
             if(candidate){
                 throw ApiError.BadRequest("Пользователь с таким мэйлом существует");
             }
-            const user = await UserModel.create({email, password, userName, userLastName, userPhoto, userSetting});
+
+            const hashPassword = await bcrypt.hash(password, 3);
+            const user = await UserModel.create({email, password: hashPassword, userName, userLastName, userPhoto, userSetting});
             const userDto = new UserDto(user);
             return res.json(userDto);
         }catch (e){
@@ -41,7 +45,20 @@ class UserController{
 
     async login(req, res, next){
         try {
-
+            const {email, password} = req.body;
+            const user = await UserModel.findOne({email});
+            if (!user) {
+                throw ApiError.BadRequest('Пользователь с таким мылом не найден');
+            }
+            const isPassEquals = await bcrypt.compare(password, user.password);
+            if (!isPassEquals) {
+                throw ApiError.BadRequest('Неверный пароль');
+            }
+            
+            const userDto = new UserDto(user);
+            const tokens = tokenService.generateToken({...userDto});
+            await tokenService.saveToken(userDto.id, tokens.refreshToken);
+            return res.json(tokens);
         }catch (e){
             next(e);
         }
@@ -49,7 +66,9 @@ class UserController{
 
     async logout(req, res, next){
         try {
-
+            const {refreshToken} = req.query;
+            const token = await tokenService.removeToken(refreshToken);
+            return res.json(token);
         }catch (e){
             next(e);
         }
