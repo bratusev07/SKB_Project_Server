@@ -3,11 +3,16 @@ const ApiError = require('../exeptions/api-error');
 const UserDto = require('../dtos/user-dto');
 const bcrypt = require('bcrypt');
 const tokenService = require('../services/token-service');
+const {validationResult} = require('express-validator');
 
 class UserController{
 
     async registration(req, res, next){
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
             const {email, password, userName, userLastName, userPhoto, userSetting} = req.body;
             const candidate = await UserModel.findOne({email});
             if(candidate){
@@ -25,6 +30,10 @@ class UserController{
 
     async getUser(req, res, next){
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
             const {userID} = req.query;
             const user = await UserModel.findById(userID);
             return res.json(user);
@@ -35,6 +44,10 @@ class UserController{
 
     async remove(req, res, next){
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
             const {userID} = req.query;
             await UserModel.findByIdAndRemove(userID);
             return res.json("User was removed");
@@ -45,6 +58,10 @@ class UserController{
 
     async login(req, res, next){
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
             const {email, password} = req.body;
             const user = await UserModel.findOne({email});
             if (!user) {
@@ -66,6 +83,10 @@ class UserController{
 
     async logout(req, res, next){
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
             const {refreshToken} = req.query;
             const token = await tokenService.removeToken(refreshToken);
             return res.json(token);
@@ -76,6 +97,10 @@ class UserController{
 
     async getAllUsers(req, res, next){
         try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
             const users = await UserModel.find();
             return res.json(users);
         }catch (e){
@@ -85,7 +110,11 @@ class UserController{
 
     async updateUser(req, res, next){
         try {
-            const user = await UserModel.findByIdAndUpdate(req.body._id, req.body, {new: true});
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
+            const user = await UserModel.findByIdAndUpdate(req.body.userId, req.body, {new: true});
             return res.json(user);
         }catch (e){
             next(e);
