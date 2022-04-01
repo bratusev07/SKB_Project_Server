@@ -2,6 +2,7 @@ const UserModel = require('../models/user-model');
 const AuthModel = require('../models/auth-model');
 const ApiError = require('../exeptions/api-error');
 const UserDto = require('../dtos/user-dto');
+const AuthDto = require('../dtos/auth-dto');
 const bcrypt = require('bcrypt');
 const tokenService = require('../services/token-service');
 const {validationResult} = require('express-validator');
@@ -68,11 +69,13 @@ class UserController{
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
             const {email, password} = req.body;
-            const user = await UserModel.findOne({email});
-            if (!user) {
+            const auth = await AuthModel.findOne({email});
+            const authDto = new AuthDto(auth);
+            const user = await UserModel.findById(authDto.userId);
+            if (!auth) {
                 throw ApiError.BadRequest('Пользователь с таким мылом не найден');
             }
-            const isPassEquals = await bcrypt.compare(password, user.password);
+            const isPassEquals = await bcrypt.compare(password, authDto.password);
             if (!isPassEquals) {
                 throw ApiError.BadRequest('Неверный пароль');
             }
@@ -80,6 +83,15 @@ class UserController{
             const userDto = new UserDto(user);
             const tokens = tokenService.generateToken({...userDto});
             await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+            const visit = { date: 'date', startTime: 'start', endTime: 'end' };
+            user.visits.push(visit);
+            user.save();
+            /*UserModel.update(
+                { _id: userDto.id },
+                { $push: { visits: visit } }
+            );*/
+
             return res.json(tokens);
         }catch (e){
             next(e);

@@ -4,6 +4,7 @@ module.exports = class UserDto {
     userLastName;
     userPhoto;
     userSetting;
+    visits;
 
     constructor(model) {
         this.id = model._id;
@@ -11,5 +12,6 @@ module.exports = class UserDto {
         this.userLastName = model.userLastName;
         this.userPhoto = model.userPhoto;
         this.userSetting = model.userSetting;
+        this.visits = model.visits;
     }
 }
