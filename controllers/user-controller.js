@@ -84,14 +84,6 @@ class UserController{
             const tokens = tokenService.generateToken({...userDto});
             await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
-            const visit = { date: 'date', startTime: 'start', endTime: 'end' };
-            user.visits.push(visit);
-            user.save();
-            /*UserModel.update(
-                { _id: userDto.id },
-                { $push: { visits: visit } }
-            );*/
-
             return res.json(tokens);
         }catch (e){
             next(e);
@@ -133,6 +125,25 @@ class UserController{
             }
             const user = await UserModel.findByIdAndUpdate(req.body.userId, req.body, {new: true});
             return res.json(user);
+        }catch (e){
+            next(e);
+        }
+    }
+
+    async uploadVisit(req, res, next){
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
+
+            const {userId, date, startTime, endTime} = req.body;
+            const user = await UserModel.findById(userId);
+            const visit = { date: date, startTime: startTime, endTime: endTime };
+            user.visits.push(visit);
+            user.save();
+
+            return res.json(visit);
         }catch (e){
             next(e);
         }

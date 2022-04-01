@@ -48,4 +48,12 @@ router.put('/updateUser',
     authMiddleware,
     userController.updateUser);
 
+router.post('/uploadVisit',
+    body('userId').isMongoId(),
+    body('date').isString(),
+    body('startTime').isString(),
+    body('endTime').isString(),
+    authMiddleware,
+    userController.uploadVisit);
+
 module.exports = router;
