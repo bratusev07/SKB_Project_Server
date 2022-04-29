@@ -4,7 +4,6 @@ const mongoose = require('mongoose');
 const router = require('./routers/user-router');
 const errorMiddleware = require('./middlewares/error-middleware');
 
-const PORT = 3000 || process.env.PORT;
 const app = express();
 
 app.use(express.json());
@@ -17,7 +16,7 @@ const start = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        app.listen(PORT, this.address().port, () => console.log("Server started"));
+        app.listen(3000 || process.env.PORT);
     } catch (e) {
         console.log(e);
     }
