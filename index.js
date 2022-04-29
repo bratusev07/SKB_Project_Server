@@ -17,7 +17,7 @@ const start = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        app.listen(PORT, () => console.log("Server started"));
+        app.listen(PORT, this.address().port, () => console.log("Server started"));
     } catch (e) {
         console.log(e);
     }
