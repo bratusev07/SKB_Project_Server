@@ -4,5 +4,6 @@
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/SKB_Project_Server" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/skb-app" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/stormy-harbor-76081" vcs="Git" />
   </component>
 </project>
