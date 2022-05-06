@@ -2,6 +2,9 @@
   "name": "skb_project",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "16.14.0"
+  },
   "scripts": {
     "start": "node index.js"
   },
