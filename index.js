@@ -16,7 +16,7 @@ const start = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        app.listen(process.env.PORT || 55278);
+        app.listen(process.env.PORT || 5000);
     } catch (e) {
         console.log(e);
     }
