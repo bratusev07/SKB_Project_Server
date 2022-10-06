@@ -84,7 +84,7 @@ class UserController{
             const tokens = tokenService.generateToken({...userDto});
             await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
-            return res.json(tokens);
+            return res.json([userDto, tokens]);
         }catch (e){
             next(e);
         }
