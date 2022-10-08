@@ -148,6 +148,18 @@ class UserController{
             next(e);
         }
     }
+
+    async generateCode(req, res, next){
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
+            return res.json(process.env.VERIFICATION_CODE);
+        }catch (e){
+            next(e);
+        }
+    }
 }
 
 module.exports = new UserController();

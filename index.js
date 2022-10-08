@@ -10,12 +10,18 @@ app.use(express.json());
 app.use('/api', router);
 app.use(errorMiddleware);
 
+async function createCode() {
+    const code = Math.trunc(Math.random()*10000);
+    process.env.VERIFICATION_CODE = code;
+}
+
 const start = async () => {
     try {
         await mongoose.connect(process.env.DB_URL, {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
+        setInterval(createCode, 20000);
         app.listen(process.env.PORT || 5000);
     } catch (e) {
         console.log(e);

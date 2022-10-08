@@ -56,4 +56,5 @@ router.post('/uploadVisit',
     authMiddleware,
     userController.uploadVisit);
 
+router.get('/code', userController.generateCode)
 module.exports = router;
