@@ -11,7 +11,7 @@ app.use('/api', router);
 app.use(errorMiddleware);
 
 async function createCode() {
-    const code = Math.random() * 8999 + 1000;
+    const code = Math.trunc(Math.random() * 8999 + 1000);
     process.env.VERIFICATION_CODE = code;
 }
 
