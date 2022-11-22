@@ -56,5 +56,9 @@ router.post('/uploadVisit',
     authMiddleware,
     userController.uploadVisit);
 
+router.get('/newsfeed', userController.getNews)
+
+router.get('/getCSV', userController.getCSV)
+
 router.get('/code', userController.generateCode)
 module.exports = router;

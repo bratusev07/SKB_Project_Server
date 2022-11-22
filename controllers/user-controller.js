@@ -4,12 +4,14 @@ const ApiError = require('../exeptions/api-error');
 const UserDto = require('../dtos/user-dto');
 const AuthDto = require('../dtos/auth-dto');
 const bcrypt = require('bcrypt');
+const request = require('request');
 const tokenService = require('../services/token-service');
+const mailService = require('../services/mail-service');
 const {validationResult} = require('express-validator');
 
-class UserController{
+class UserController {
 
-    async registration(req, res, next){
+    async registration(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -17,7 +19,7 @@ class UserController{
             }
             const {email, password, userName, userLastName, userPhoto, userSetting} = req.body;
             const candidate = await AuthModel.findOne({email});
-            if(candidate){
+            if (candidate) {
                 throw ApiError.BadRequest("Пользователь с таким мэйлом существует");
             }
 
@@ -26,12 +28,12 @@ class UserController{
             const auth = await AuthModel.create({email, password: hashPassword, userId: user.id});
             const userData = {user, auth};
             return res.json(userData);
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async getUser(req, res, next){
+    async getUser(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -42,12 +44,12 @@ class UserController{
             const auth = await AuthModel.findOne({userId: userID});
             const userData = {user, auth};
             return res.json(userData);
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async remove(req, res, next){
+    async remove(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -57,12 +59,12 @@ class UserController{
             await UserModel.findByIdAndRemove(userID);
             await AuthModel.findOneAndRemove({userId: userID});
             return res.json("User was removed");
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async login(req, res, next){
+    async login(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -79,18 +81,18 @@ class UserController{
             if (!isPassEquals) {
                 throw ApiError.BadRequest('Неверный пароль');
             }
-            
+
             const userDto = new UserDto(user);
             const tokens = tokenService.generateToken({...userDto});
             await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
             return res.json([userDto, tokens]);
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async logout(req, res, next){
+    async logout(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -99,12 +101,12 @@ class UserController{
             const {refreshToken} = req.query;
             const token = await tokenService.removeToken(refreshToken);
             return res.json(token);
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async getAllUsers(req, res, next){
+    async getAllUsers(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -112,26 +114,26 @@ class UserController{
             }
             const users = await UserModel.find();
             return res.json(users);
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async updateUser(req, res, next){
+    async updateUser(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
             const user = await UserModel.findByIdAndUpdate(req.body.userId, req.body, {new: true});
-            await AuthModel.updateOne({userId:req.body.userId}, {email: req.body.email}, {new: true});
+            await AuthModel.updateOne({userId: req.body.userId}, {email: req.body.email}, {new: true});
             return res.json(user);
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async uploadVisit(req, res, next){
+    async uploadVisit(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
@@ -140,24 +142,58 @@ class UserController{
 
             const {userId, date, startTime, endTime} = req.body;
             const user = await UserModel.findById(userId);
-            const visit = { date: date, startTime: startTime, endTime: endTime };
+            const visit = {date: date, startTime: startTime, endTime: endTime};
             user.visits.push(visit);
             user.save();
 
             return res.json(visit);
-        }catch (e){
+        } catch (e) {
             next(e);
         }
     }
 
-    async generateCode(req, res, next){
+    async generateCode(req, res, next) {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
             return res.json(process.env.VERIFICATION_CODE);
-        }catch (e){
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getNews(req, res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
+            const {q, count} = req.body;
+            const url = 'https://api.vk.com/method/newsfeed.search?access_token='+ process.env.API_KEY +'&count='+ count + '&v=5.131&q=' + q
+            const clientServerOptions = {
+                uri: url,
+                method: 'GET'
+            };
+            request(clientServerOptions, function (error, response) {
+                return res.json(JSON.parse(response.body).response.items);
+            });
+
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getCSV(req, res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
+            return res.json(
+                await mailService.sendXLSFile("bratusevd@mail.ru"));
+        } catch (e) {
             next(e);
         }
     }

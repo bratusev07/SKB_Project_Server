@@ -23,8 +23,13 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.4.1",
     "mongoose": "^6.2.7",
+    "nodemailer": "^6.8.0",
     "nodemon": "^2.0.15",
+    "request": "^2.88.2",
     "serve": "^13.0.2",
-    "uuid": "^8.3.2"
+    "to-csv": "^0.1.1",
+    "uuid": "^8.3.2",
+    "xhr2": "^0.2.1",
+    "xmlhttprequest": "^1.8.0"
   }
 }
