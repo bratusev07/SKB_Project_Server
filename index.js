@@ -21,7 +21,7 @@ const start = async () => {
             useNewUrlParser: true,
             useUnifiedTopology: true
         });
-        setInterval(createCode, 20000);
+        setInterval(createCode, 60000);
         app.listen(process.env.PORT || 5000);
     } catch (e) {
         console.log(e);
