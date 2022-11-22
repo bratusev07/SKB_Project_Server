@@ -170,8 +170,8 @@ class UserController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
-            const {q, count} = req.body;
-            const url = 'https://api.vk.com/method/newsfeed.search?access_token='+ process.env.API_KEY +'&count='+ count + '&v=5.131&q=' + q
+            const {owner_id, count} = req.body;
+            const url = 'https://api.vk.com/method/wall.get?access_token='+ process.env.API_KEY +'&count='+ count + '&v=5.131&owner_id=-' + owner_id
             const clientServerOptions = {
                 uri: url,
                 method: 'GET'
