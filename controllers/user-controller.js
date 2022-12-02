@@ -125,8 +125,10 @@ class UserController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
-            const user = await UserModel.findByIdAndUpdate(req.body.userId, req.body, {new: true});
-            await AuthModel.updateOne({userId: req.body.userId}, {email: req.body.email}, {new: true});
+            const tmpUser = req.body;
+            const hashPassword = await bcrypt.hash(tmpUser.password, 3);
+            const user = await UserModel.findByIdAndUpdate(req.body.userId, tmpUser, {new: true});
+            await AuthModel.updateOne({userId: req.body.userId}, {email: req.body.email, password: hashPassword}, {new: true});
             return res.json(user);
         } catch (e) {
             next(e);
