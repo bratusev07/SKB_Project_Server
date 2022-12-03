@@ -12,6 +12,7 @@ app.use(errorMiddleware);
 
 async function createCode() {
     const code = Math.trunc(Math.random() * 8999 + 1000);
+    if(process.env.VERIFICATION_CODE !== '1111') process.env.VERIFICATION_CODE_PREV = process.env.VERIFICATION_CODE;
     process.env.VERIFICATION_CODE = code;
 }
 
@@ -28,4 +29,4 @@ const start = async () => {
     }
 }
 
-start();
+module.exports = start();

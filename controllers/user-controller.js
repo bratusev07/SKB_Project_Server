@@ -160,7 +160,7 @@ class UserController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
-            return res.json(process.env.VERIFICATION_CODE);
+            return res.json(process.env.VERIFICATION_CODE + "or" + process.env.VERIFICATION_CODE_PREV);
         } catch (e) {
             next(e);
         }
@@ -194,7 +194,7 @@ class UserController {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
             return res.json(
-                await mailService.sendXLSFile("bratusevd@mail.ru"));
+                await mailService.sendXLSFile('dbratusev@gmail.com'));
         } catch (e) {
             next(e);
         }
