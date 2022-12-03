@@ -160,6 +160,18 @@ class UserController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
+            return res.json(process.env.VERIFICATION_CODE);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async getTwoCodes(req, res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
             return res.json(process.env.VERIFICATION_CODE + "or" + process.env.VERIFICATION_CODE_PREV);
         } catch (e) {
             next(e);
@@ -193,8 +205,8 @@ class UserController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
-            return res.json(
-                await mailService.sendXLSFile('dbratusev@gmail.com'));
+            return res.json('Не работает'/*
+                await mailService.sendXLSFile('dbratusev@gmail.com')*/);
         } catch (e) {
             next(e);
         }

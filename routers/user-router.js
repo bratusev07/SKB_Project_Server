@@ -61,4 +61,6 @@ router.post('/newsfeed', userController.getNews)
 router.get('/getCSV', userController.getCSV)
 
 router.get('/code', userController.generateCode)
+
+router.get('/twoCodes', userController.getTwoCodes)
 module.exports = router;
