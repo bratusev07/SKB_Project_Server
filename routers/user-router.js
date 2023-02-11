@@ -35,7 +35,6 @@ router.get('/getUser',
     userController.getUser);
 
 router.get('/getAllUsers',
-    authMiddleware,
     userController.getAllUsers);
 
 router.put('/updateUser',
@@ -53,7 +52,6 @@ router.post('/uploadVisit',
     body('date').isString(),
     body('startTime').isString(),
     body('endTime').isString(),
-    authMiddleware,
     userController.uploadVisit);
 
 router.post('/newsfeed', userController.getNews)

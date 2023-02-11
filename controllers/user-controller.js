@@ -113,7 +113,11 @@ class UserController {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
             const users = await UserModel.find();
-            return res.json(users);
+            const resultArray = []
+            users.forEach((item, index) => {
+                resultArray[index] = [{id : item._id, userName : item.userName, userLastName : item.userLastName}]
+            })
+            return res.json(resultArray);
         } catch (e) {
             next(e);
         }
