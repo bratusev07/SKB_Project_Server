@@ -8,6 +8,7 @@ const request = require('request');
 const tokenService = require('../services/token-service');
 const mailService = require('../services/mail-service');
 const {validationResult} = require('express-validator');
+const userModel = require('../models/user-model');
 
 class UserController {
 
@@ -209,8 +210,8 @@ class UserController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
-            return res.json('Не работает'/*
-                await mailService.sendXLSFile('dbratusev@gmail.com')*/);
+            await mailService.sendXLSFile(await userModel.find())
+            return res.download('data.xlsx');
         } catch (e) {
             next(e);
         }

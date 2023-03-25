@@ -1,5 +1,7 @@
 const nodeMail = require('nodemailer');
-const toCsv = require('to-csv');
+const json2xls = require('json2xls');
+const fs = require('fs'); 
+const userModel = require('../models/user-model');
 
 class MailService {
 
@@ -18,61 +20,9 @@ class MailService {
         })
     }
 
-    async sendXLSFile(to) {
-
-        const data = [
-            {
-                "_id": "61fd1d4c58c68be27e40bc12",
-                "gameId": "61fc58f611ae2f7d4a976009",
-                "number": 0,
-                "playerId": "61fc34d112fab7d43f8df3bc",
-                "zone_number": 2,
-                "result": 1,
-                "__v": 0
-            },
-            {
-                "_id": "61fd1d5858c68be27e40bc14",
-                "gameId": "61fc58f611ae2f7d4a976009",
-                "number": 0,
-                "playerId": "61fc34d112fab7d43f8df3bc",
-                "zone_number": 22,
-                "result": 1,
-                "__v": 0
-            },
-            {
-                "_id": "61fd1da883f206effd39dd4c",
-                "gameId": "61fc58f611ae2f7d4a976009",
-                "number": 0,
-                "playerId": "61fc34d112fab7d43f8df3bc",
-                "zone_number": 2,
-                "result": 1,
-                "__v": 0
-            },
-            {
-                "_id": "61fd1dc883f206effd39dd4e",
-                "gameId": "61fc58f611ae2f7d4a976009",
-                "number": 0,
-                "playerId": "61fc34d112fab7d43f8df3bc",
-                "zone_number": 2,
-                "result": -1,
-                "__v": 0
-            },
-            {
-                "_id": "61fd1dcb83f206effd39dd50",
-                "gameId": "61fc58f611ae2f7d4a976009",
-                "number": 0,
-                "playerId": "61fc34d112fab7d43f8df3bc",
-                "zone_number": 32,
-                "result": 1,
-                "__v": 0
-            }
-        ]
-
-        await this.transporter.sendMail({
-            from: process.env.SMTP_USER, to,
-            subject: 'Активация аккаунта на ' + process.env.API_URL,
-            attachments: [{filename: "subject" + '.csv',content: toCsv(data)}]
-        })
+    async sendXLSFile(data) {
+        const xls = json2xls(data);
+        fs.writeFileSync('data.xlsx', xls, 'binary'); 
     }
 }
 
