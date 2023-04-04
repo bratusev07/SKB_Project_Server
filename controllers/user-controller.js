@@ -249,7 +249,7 @@ class UserController {
             const users = await UserModel.find();
 
             await mailService.sendXLSFile2(users);
-            return res.download('data.xlsx');
+            return res.download('/tmp/data.xlsx');
         } catch (e) {
             next(e);
         }

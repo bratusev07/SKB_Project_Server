@@ -50,7 +50,7 @@ class MailService {
             XLSX.utils.book_append_sheet(workbook, worksheet, item.userName + " " + item.userLastName);
         });
 
-        const fileName = 'data.xlsx';
+        const fileName = '/tmp/data.xlsx';
         XLSX.writeFile(workbook, fileName);
     }
 }
