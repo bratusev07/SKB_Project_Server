@@ -36,9 +36,9 @@ class MailService {
             let resTime = ["Время"];
             try {
                 for (var i = 1; i <= item.visits.length; i++) {
-                    date[i] = item.visits[i].date;
-                    startTime[i] = item.visits[i].startTime;
-                    endTime[i] = item.visits[i].endTime;
+                    date[i] = item.visits[i-1].date;
+                    startTime[i] = item.visits[i-1].startTime;
+                    endTime[i] = item.visits[i-1].endTime;
                     resTime[i] = getTimeDiff(startTime[i], endTime[i]);
                 }
             } catch (e) {}
