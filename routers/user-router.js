@@ -54,6 +54,10 @@ router.post('/uploadVisit',
     body('endTime').isString(),
     userController.uploadVisit);
 
+router.post('/clearVisits',
+    body('userId').isMongoId(),
+    userController.clearVisits)
+
 router.post('/newsfeed', userController.getNews)
 
 router.get('/getCSV', userController.getCSV)

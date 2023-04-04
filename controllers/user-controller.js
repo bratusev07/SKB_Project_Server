@@ -150,13 +150,49 @@ class UserController {
             const { userId, date, startTime, endTime } = req.body;
             const user = await UserModel.findById(userId);
             const visit = { date: date, startTime: startTime, endTime: endTime };
-            user.visits.push(visit);
-            user.save();
-
+            if (contains(user.visits, visit)) {
+                user.visits.push(visit);
+                user.save();
+            }
             return res.json(visit);
         } catch (e) {
             next(e);
         }
+    }
+
+
+    async clearVisits(req, res, next) {
+        try {
+            const errors = validationResult(req);
+            if (!errors.isEmpty()) {
+                return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
+            }
+
+            const { userId } = req.body;
+            const user = await UserModel.findById(userId);
+
+            for (var index = user.visits.length-1; index > 0; index--) {
+                if (user.visits[index].date === user.visits[index - 1].date
+                    && user.visits[index].startTime === user.visits[index - 1].startTime) {
+                    console.log(user.visits[index].date + " == " + user.visits[index - 1].date);
+                    const res = user.visits.splice(index, 1);
+                }
+            }
+
+            user.save();
+            return res.json("Ok");
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    async contains(arr, elem) {
+        for (var i = 0; i < arr.length; i++) {
+            if (arr[i] === elem) {
+                return true;
+            }
+        }
+        return false;
     }
 
     async generateCode(req, res, next) {

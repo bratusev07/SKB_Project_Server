@@ -28,10 +28,6 @@ class MailService {
 
     async sendXLSFile2(users) {
         const workbook = XLSX.utils.book_new();
-        /*users.forEach((item, index) => {
-            visitArray[index] = item.visits
-            userArray[index] = item.userName + " " + item.userLastName;
-        })*/
 
         users.forEach((item, index) => {
             let date = ["Дата"];
@@ -44,11 +40,8 @@ class MailService {
                     startTime[i] = item.visits[i].startTime;
                     endTime[i] = item.visits[i].endTime;
                     resTime[i] = getTimeDiff(startTime[i], endTime[i]);
-                    console.log(index + " :: " + date[i] + " " + startTime[i]);
                 }
-            } catch (e) { console.log("Something went wrong"); }
-
-
+            } catch (e) {}
 
             const worksheet = XLSX.utils.aoa_to_sheet(
                 rotateMatrix([resTime, endTime, startTime, date])
