@@ -246,10 +246,11 @@ class UserController {
             if (!errors.isEmpty()) {
                 return next(ApiError.BadRequest('Ошибка при валидации', errors.array()));
             }
+            const {date} = req.body;
             const users = await UserModel.find();
 
-            await mailService.sendXLSFile2(users);
-            return res.download('/tmp/data.xlsx');
+            await mailService.sendXLSFile2(users, date);
+            return res.download('data.xlsx');
         } catch (e) {
             next(e);
         }

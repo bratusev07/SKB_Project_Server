@@ -21,27 +21,30 @@ class MailService {
         })
     }
 
-    async sendXLSFile(data) {
-        const xls = json2xls(data);
-        fs.writeFileSync('data.xlsx', xls, 'binary');
-    }
-
-    async sendXLSFile2(users) {
+    async sendXLSFile2(users, startDate) {
         const workbook = XLSX.utils.book_new();
 
-        users.forEach((item, index) => {
+        users.forEach(item => {
+            console.log("------------------\n----------------");
             let date = ["Дата"];
             let startTime = ["Вход"];
             let endTime = ["Выход"];
+            let j = 1;
             let resTime = ["Время"];
             try {
-                for (var i = 1; i <= item.visits.length; i++) {
-                    date[i] = item.visits[i-1].date;
-                    startTime[i] = item.visits[i-1].startTime;
-                    endTime[i] = item.visits[i-1].endTime;
-                    resTime[i] = getTimeDiff(startTime[i], endTime[i]);
+                for (var i = 0; i < item.visits.length; i++) {
+                    console.log(item.visits.length);
+                    console.log(i + " " + item.visits[i]);
+                    if (compareDates(startDate, item.visits[i].date))
+                    {
+                        date[j] = item.visits[i].date;
+                        startTime[j] = item.visits[i].startTime;
+                        endTime[j] = item.visits[i].endTime;
+                        resTime[j] = getTimeDiff(startTime[j], endTime[j]);
+                        j++;
+                    }
                 }
-            } catch (e) {}
+            } catch (e) { console.log(e); }
 
             const worksheet = XLSX.utils.aoa_to_sheet(
                 rotateMatrix([resTime, endTime, startTime, date])
@@ -50,9 +53,17 @@ class MailService {
             XLSX.utils.book_append_sheet(workbook, worksheet, item.userName + " " + item.userLastName);
         });
 
-        const fileName = '/tmp/data.xlsx';
+        const fileName = 'data.xlsx';
         XLSX.writeFile(workbook, fileName);
     }
+}
+
+function compareDates(dateStr1, dateStr2) {
+    const [day1, month1, year1] = dateStr1.split(".");
+    const [day2, month2, year2] = dateStr2.split(".");
+    const date1 = new Date(year1, month1, day1);
+    const date2 = new Date(year2, month2, day2);
+    return date1.getTime() < date2.getTime();
 }
 
 function getTimeDiff(time1, time2) {

@@ -60,7 +60,7 @@ router.post('/clearVisits',
 
 router.post('/newsfeed', userController.getNews)
 
-router.get('/getCSV', userController.getCSV)
+router.post('/getCSV', userController.getCSV)
 
 router.get('/code', userController.generateCode)
 
