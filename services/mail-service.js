@@ -25,7 +25,6 @@ class MailService {
         const workbook = XLSX.utils.book_new();
 
         users.forEach(item => {
-            console.log("------------------\n----------------");
             let date = ["Дата"];
             let startTime = ["Вход"];
             let endTime = ["Выход"];
@@ -33,10 +32,7 @@ class MailService {
             let resTime = ["Время"];
             try {
                 for (var i = 0; i < item.visits.length; i++) {
-                    console.log(item.visits.length);
-                    console.log(i + " " + item.visits[i]);
-                    if (compareDates(startDate, item.visits[i].date))
-                    {
+                    if (compareDates(startDate, item.visits[i].date)) {
                         date[j] = item.visits[i].date;
                         startTime[j] = item.visits[i].startTime;
                         endTime[j] = item.visits[i].endTime;
@@ -44,7 +40,7 @@ class MailService {
                         j++;
                     }
                 }
-            } catch (e) { console.log(e); }
+            } catch (e) { }
 
             const worksheet = XLSX.utils.aoa_to_sheet(
                 rotateMatrix([resTime, endTime, startTime, date])
