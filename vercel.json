@@ -15,7 +15,7 @@
         "trailingSlash": false,
         "headers": [
           {
-            "source": "/(.*)",
+            "source": "/tmp/(.*)",
             "headers": [
               {
                 "key": "Cache-Control",
