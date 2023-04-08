@@ -4,27 +4,7 @@
     {
       "src": "index.js",
       "use": "@vercel/node",
-      "config": {
-        "cleanUrls": true,
-        "rewrites": [
-          {
-            "source": "/tmp/(.*)",
-            "destination": "/index.html"
-          }
-        ],
-        "trailingSlash": false,
-        "headers": [
-          {
-            "source": "/(.*)",
-            "headers": [
-              {
-                "key": "Cache-Control",
-                "value": "public, max-age=31536000, immutable"
-              }
-            ]
-          }
-        ]
-      }
+      "build": "next build --no-mangle"
     }
   ],
   "routes": [
@@ -32,8 +12,5 @@
       "src": "/(.*)",
       "dest": "index.js"
     }
-  ],
-  "env": {},
-  "public": true
-  
+  ]
 }
