@@ -6,7 +6,8 @@
     "node": "16.14.0"
   },
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "next build --no-mangle"
   },
   "keywords": [],
   "author": "",
