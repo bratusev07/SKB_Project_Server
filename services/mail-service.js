@@ -32,7 +32,8 @@ class MailService {
             let resTime = ["Время"];
             try {
                 for (var i = 0; i < item.visits.length; i++) {
-                    if (compareDates(startDate, item.visits[i].date)) {
+                    if (compareDates(startDate, item.visits[i].date))
+                    {
                         date[j] = item.visits[i].date;
                         startTime[j] = item.visits[i].startTime;
                         endTime[j] = item.visits[i].endTime;
@@ -49,7 +50,7 @@ class MailService {
             XLSX.utils.book_append_sheet(workbook, worksheet, item.userName + " " + item.userLastName);
         });
 
-        const fileName = '/tmp/data222.xlsx';
+        const fileName = '/tmp/data.xlsx';
         XLSX.writeFile(workbook, fileName);
     }
 }
